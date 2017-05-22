@@ -8,10 +8,13 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <sstream>
+#include <regex>
 
 using namespace std;
 
 namespace facter { namespace facts { namespace resolvers {
+
+    string banned_interfaces[] = { "tap", "veth" };
 
     networking_resolver::networking_resolver() :
         resolver(
@@ -73,6 +76,16 @@ namespace facter { namespace facts { namespace resolvers {
         auto dhcp_servers = make_value<map_value>(true);
         auto interfaces = make_value<map_value>();
         for (auto& interface : data.interfaces) {
+            bool interface_banned = 0;
+            for (auto banned_interface : banned_interfaces) {
+                if (interface.name.find(banned_interface) == 0) {
+                    interface_banned = 1;
+                    break;
+                }
+            }
+
+            if (interface_banned) continue;
+
             bool primary = interface.name == data.primary_interface;
             auto value = make_value<map_value>();
 
