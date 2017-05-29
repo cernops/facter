@@ -14,7 +14,7 @@ using namespace std;
 
 namespace facter { namespace facts { namespace resolvers {
 
-    string banned_interfaces[] = { "tap", "veth" };
+    string banned_interfaces[] = { "nic", "tap", "veth" };
 
     networking_resolver::networking_resolver() :
         resolver(
